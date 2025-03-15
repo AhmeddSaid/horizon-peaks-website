@@ -125,5 +125,3 @@ The application leverages Supabase with a Postgres database, reusing tables from
 ---
 
 ### **Code Author:** [Ahmed Said](https://ahmedsaidadnan.com)
-
----
