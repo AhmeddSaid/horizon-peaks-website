@@ -1,6 +1,12 @@
 import { notFound } from "next/navigation";
 import { eachDayOfInterval } from "date-fns";
 import { supabase } from "./supabase";
+
+// Helper function to sanitize absolute Supabase storage URLs to relative proxy paths
+function getSanitizedImageUrl(imagePath) {
+  if (!imagePath) return imagePath;
+  return imagePath.replace(/^https?:\/\/[^\/]+(?:\/)?\/storage/, "/supabase-storage");
+}
 /////////////
 // GET
 
@@ -17,6 +23,10 @@ export async function getCabin(id) {
   if (error) {
     console.error(error);
     notFound();
+  }
+
+  if (data && data.image) {
+    data.image = getSanitizedImageUrl(data.image);
   }
 
   return data;
@@ -47,7 +57,12 @@ export const getCabins = async function () {
     throw new Error("Cabins could not be loaded");
   }
 
-  return data;
+  const sanitizedData = data?.map((cabin) => ({
+    ...cabin,
+    image: getSanitizedImageUrl(cabin.image),
+  })) || [];
+
+  return sanitizedData;
 };
 
 // Guests are uniquely identified by their email address
@@ -92,7 +107,20 @@ export async function getBookings(guestId) {
     throw new Error("Bookings could not get loaded");
   }
 
-  return data;
+  const sanitizedData = data?.map((booking) => {
+    if (booking.cabins) {
+      return {
+        ...booking,
+        cabins: {
+          ...booking.cabins,
+          image: getSanitizedImageUrl(booking.cabins.image),
+        },
+      };
+    }
+    return booking;
+  }) || [];
+
+  return sanitizedData;
 }
 
 export async function getBookedDatesByCabinId(cabinId) {
