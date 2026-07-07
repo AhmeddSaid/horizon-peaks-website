@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import image1 from "@/public/about-1.jpg";
 import image2 from "@/public/about-2.jpg";
 import { getCabins } from "@/app/_lib/data-service";
@@ -81,12 +82,12 @@ export default async function Page() {
           </p>
 
           <div>
-            <a
+            <Link
               href="/cabins"
               className="inline-block px-8 py-5 mt-4 text-lg font-semibold transition-all bg-accent-500 text-primary-800 hover:bg-accent-600"
             >
               Explore our luxury cabins
-            </a>
+            </Link>
           </div>
         </div>
       </div>
